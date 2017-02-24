@@ -24,13 +24,27 @@ def home():
 def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
+    
+@app.route('/filelisting/')
+def filelisting():
+    """Render the website's filelisting page."""
+    if not session.get('logged_in'):
+        abort(401)
+    rooting = os.getcwd()
+    filing = []
+    for subdir, dirs, files in os.walk(rooting + '/app/static/uploads'):
+        filing.extend(files)
+        break
+            
+            
+    return render_template('filelisting.html', filesl = filing )     
 
 @app.route('/add-file', methods=['POST', 'GET'])
 def add_file():
     if not session.get('logged_in'):
         abort(401)
 
-    file_folder = ''
+    file_folder = 'app/static/uploads'
 
     if request.method == 'POST':
         file = request.files['file']
