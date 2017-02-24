@@ -27,17 +27,23 @@ def about():
     
 @app.route('/filelisting/')
 def filelisting():
-    """Render the website's filelisting page."""
+    files= listfiles()
+    return render_template('files.html', x=files )
+
+
+def listfiles():
     if not session.get('logged_in'):
         abort(401)
-    rooting = os.getcwd()
-    filing = []
-    for subdir, dirs, files in os.walk(rooting + '/app/static/uploads'):
-        filing.extend(files)
-        break
-            
-            
-    return render_template('filelisting.html', filesl = filing )     
+
+    if request.method == 'GET':
+        rootdir = os.getcwd()
+        print rootdir
+        files = []
+        for subdir, dirs, files in os.walk(rootdir + '/app/static/uploads'):
+            for file in files:
+                files.append(file)
+                print os.path.join(subdir, file)
+        return files     
 
 @app.route('/add-file', methods=['POST', 'GET'])
 def add_file():
